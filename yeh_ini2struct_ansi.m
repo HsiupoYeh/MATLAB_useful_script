@@ -15,8 +15,8 @@ function IniFile = yeh_ini2struct_ansi(input_ini_file_name)
     % 開啟檔案    
     fid = fopen(input_ini_file_name,'r');  
     if fid<0
-        disp(['開啟檔案失敗!return!檔案名稱:',input_ini_file_name,'.'])
-        EarthImagerOutFile.Error.String=['開啟檔案失敗!return!檔案名稱:',input_ini_file_name,'.'];
+        %disp(['開啟檔案失敗!return!檔案名稱:',input_ini_file_name,'.'])
+        IniFile.Error.String=['開啟檔案失敗!return!檔案名稱:',input_ini_file_name,'.'];
         return
     end
     %--
