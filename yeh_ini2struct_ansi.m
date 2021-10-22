@@ -68,7 +68,6 @@ function IniFile = yeh_ini2struct_ansi(input_ini_file_name)
         else
             IniFile.Struct.(temp_section).(genvarname(temp_Key)) = temp_Value;
         end
-
     end
     %--
     % Ãö³¬ÀÉ®×
