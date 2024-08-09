@@ -33,7 +33,7 @@ function md5hash = yeh_MD5_checksum(input_file_name)
     f1= fopen(input_file_name); 
     if (f1<0)
         %disp(['錯誤!開啟檔案失敗!return!檔案名稱:',Input_file_name,'.'])
-        md5hash.Error.String=['錯誤!開啟檔案失敗!return!檔案名稱:',Input_file_name,'.'];
+        md5hash.Error.String=['錯誤!開啟檔案失敗!return!檔案名稱:',input_file_name,'.'];
         return
     end
     %--
