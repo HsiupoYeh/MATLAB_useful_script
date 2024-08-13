@@ -179,13 +179,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   //Allocate memory for the Double
   mxArray_return_code=mxCreateDoubleMatrix(1,1,mxREAL);
   mxArray_return_code_ptr=mxGetPr(mxArray_return_code);
-  //填入資料 	mxArray_return_code_ptr[0]=0;
+  //填入資料
+  mxArray_return_code_ptr[0]=0;
   //---------------------------------------------------------
   //填入MATLAB結構體中第2個fieldnames要填的資料(MATLAB ARRAY)，是string類型。
-  //Allocate memory for the String 	mxArray_version=mxCreateString("v20171130a");
+  //Allocate memory for the String
+  mxArray_version=mxCreateString("v20171130a");
   //---------------------------------------------------------
   //填入MATLAB結構體中第2個fieldnames要填的資料(MATLAB ARRAY)，是string類型。
-  //Allocate memory for the String 	mxArray_Error_Msg=mxCreateString("");
+  //Allocate memory for the String
+  mxArray_Error_Msg=mxCreateString("");
   //---------------------------------------------------------
   //=========================================================
   //=========================================================
@@ -219,18 +222,78 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     //--------------------------------------------------------------------------
     //原本C語言主程式程式碼，修改自「主程式部分」
     //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-//用LoadLibrary動態載入dll，回傳的模組位址是 HMODULE類型。
-HMODULE_my_user32dll=LoadLibrary("user32.dll");
-//有時候會用LoadLibraryA來載入ANSI的，用LoadLibraryW來載入Unicode的，我不太確
-//定什麼時候要用哪個，但用錯時編譯器可能會告訴我錯誤。
-//-- 		if (HMODULE_my_user32dll==NULL) 		{
-//printf("動態載入user32.dll失敗，返回-1！\n");
-//填入要改變的MATLAB結構陣列的欄位值
-mxArray_return_code_ptr[0]=-1;
-mxArray_Error_Msg=mxCreateString("動態載入user32.dll失敗，返回-1！");
-//值設置到輸出變數 			mxSetFieldByNumber(plhs[0],0,0,mxArray_return_code); 			mxSetFieldByNumber(plhs[0],0,1,mxArray_version); 			mxSetFieldByNumber(plhs[0],0,2,mxArray_Error_Msg); 			return; 		} 		//-------------------------------------------------------------------------- 		//-------------------------------------------------------------------------- 		//用GetProcAddress取得該dll中的某個函式的指標位置，查手冊知道有一個函數名稱為 		//"MessageBoxA"。 		my_pf_MessageBoxA=(pf_MessageBox)GetProcAddress(HMODULE_my_user32dll,"MessageBoxA"); 		//前面已經定義過的型態這時候就很好用，程式碼變好寫也容易讀。 		//-- 		if (my_pf_MessageBoxA==NULL) 		{ 			//printf("取得MessageBoxA函數指標失敗，返回-1！\n"); 			//填入要改變的MATLAB結構陣列的欄位值 			mxArray_return_code_ptr[0]=-1; 			mxArray_Error_Msg=mxCreateString("取得MessageBoxA函數指標失敗，返回-1！"); 			//值設置到輸出變數 			mxSetFieldByNumber(plhs[0],0,0,mxArray_return_code); 			mxSetFieldByNumber(plhs[0],0,1,mxArray_version); 			mxSetFieldByNumber(plhs[0],0,2,mxArray_Error_Msg); 			return; 		} 		//-------------------------------------------------------------------------- 		//-------------------------------------------------------------------------- 		//呼叫這個函式 		int_result=my_pf_MessageBoxA(NULL,"這是內容", "這是標題", MB_OK); 		//printf("my_pf_MessageBoxA Return value = %d\n",int_result); 		//-------------------------------------------------------------------------- 		//釋放DLL，實際上這個函式只是個計數器，釋放就是計數器的值-1，到0才會被真的釋放 		//。重複使用載入函數也不會重複載入，只是會增加計數器的值。 		FreeLibrary(HMODULE_my_user32dll); 		//-------------------------------------------------------------------------- 		//填入要改變的MATLAB結構陣列的欄位值 		mxArray_return_code_ptr[0]=0; 		mxArray_Error_Msg=mxCreateString(""); 		//值設置到輸出變數 		mxSetFieldByNumber(plhs[0],0,0,mxArray_return_code); 		mxSetFieldByNumber(plhs[0],0,1,mxArray_version); 		mxSetFieldByNumber(plhs[0],0,2,mxArray_Error_Msg);					 		return;		 	} 	else 	{ //printf("main: Error! Option is not correct!\n"); 		usage(); 		//填入要改變的MATLAB結構陣列的欄位值 		mxArray_return_code_ptr[0]=-1; 		mxArray_Error_Msg=mxCreateString("Error! Option is not correct!"); 		//值設置到輸出變數 		mxSetFieldByNumber(plhs[0],0,0,mxArray_return_code); 		mxSetFieldByNumber(plhs[0],0,1,mxArray_version); 		mxSetFieldByNumber(plhs[0],0,2,mxArray_Error_Msg); 		return; 	} }
-
+    //--------------------------------------------------------------------------
+    //用LoadLibrary動態載入dll，回傳的模組位址是 HMODULE類型。
+    HMODULE_my_user32dll=LoadLibrary("user32.dll");
+    //有時候會用LoadLibraryA來載入ANSI的，用LoadLibraryW來載入Unicode的，我不太確
+    //定什麼時候要用哪個，但用錯時編譯器可能會告訴我錯誤。
+    //--
+    if (HMODULE_my_user32dll==NULL)
+    {
+      //printf("動態載入user32.dll失敗，返回-1！\n");
+      //填入要改變的MATLAB結構陣列的欄位值
+      mxArray_return_code_ptr[0]=-1;
+      mxArray_Error_Msg=mxCreateString("動態載入user32.dll失敗，返回-1！");
+      //值設置到輸出變數
+      mxSetFieldByNumber(plhs[0],0,0,mxArray_return_code);
+      mxSetFieldByNumber(plhs[0],0,1,mxArray_version);
+      mxSetFieldByNumber(plhs[0],0,2,mxArray_Error_Msg);
+      return;
+    }
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //用GetProcAddress取得該dll中的某個函式的指標位置，查手冊知道有一個函數名稱為
+    //"MessageBoxA"。
+    my_pf_MessageBoxA=(pf_MessageBox)GetProcAddress(HMODULE_my_user32dll,"MessageBoxA");
+    //前面已經定義過的型態這時候就很好用，程式碼變好寫也容易讀。
+    //--
+    if (my_pf_MessageBoxA==NULL)
+    {
+      //printf("取得MessageBoxA函數指標失敗，返回-1！\n");
+      //填入要改變的MATLAB結構陣列的欄位值
+      mxArray_return_code_ptr[0]=-1;
+      mxArray_Error_Msg=mxCreateString("取得MessageBoxA函數指標失敗，返回-1！");
+      //值設置到輸出變數
+      mxSetFieldByNumber(plhs[0],0,0,mxArray_return_code);
+      mxSetFieldByNumber(plhs[0],0,1,mxArray_version);
+      mxSetFieldByNumber(plhs[0],0,2,mxArray_Error_Msg);
+      return;
+    }
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //呼叫這個函式
+    int_result=my_pf_MessageBoxA(NULL,"這是內容", "這是標題", MB_OK);
+    //printf("my_pf_MessageBoxA Return value = %d\n",int_result);
+    //--------------------------------------------------------------------------
+    //釋放DLL，實際上這個函式只是個計數器，釋放就是計數器的值-1，到0才會被真的釋放
+    //。重複使用載入函數也不會重複載入，只是會增加計數器的值。
+    FreeLibrary(HMODULE_my_user32dll);
+    //--------------------------------------------------------------------------
+    //填入要改變的MATLAB結構陣列的欄位值
+    mxArray_return_code_ptr[0]=0;
+    mxArray_Error_Msg=mxCreateString("");
+    //值設置到輸出變數
+    mxSetFieldByNumber(plhs[0],0,0,mxArray_return_code);
+    mxSetFieldByNumber(plhs[0],0,1,mxArray_version);
+    mxSetFieldByNumber(plhs[0],0,2,mxArray_Error_Msg);
+    return;
+  }
+  else
+  {
+    //printf("main: Error! Option is not correct!\n");
+    usage();
+    //填入要改變的MATLAB結構陣列的欄位值
+    mxArray_return_code_ptr[0]=-1;
+    mxArray_Error_Msg=mxCreateString("Error! Option is not correct!");
+    //值設置到輸出變數
+    mxSetFieldByNumber(plhs[0],0,0,mxArray_return_code);
+    mxSetFieldByNumber(plhs[0],0,1,mxArray_version);
+    mxSetFieldByNumber(plhs[0],0,2,mxArray_Error_Msg);
+    return;
+  }
+}
+```
+```
 編譯命令(Matlab Script):
 
 %-----------------------------------------%清除變數，清除螢幕。 clear;clc %-----------------------------------------%編譯mex檔案 mex Call_dll_example_mex.c %-----------------------------------------
